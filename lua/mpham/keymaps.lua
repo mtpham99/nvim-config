@@ -2,7 +2,7 @@
 vim.g.mapleader = ' '
 
 -- Explorer
-vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
+vim.keymap.set('n', '<leader>x', vim.cmd.Ex, { desc = 'E[X]plorer' })
 
 -- [[ Basic Keymaps ]]
 -- Keymaps for better default experience
