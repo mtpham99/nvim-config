@@ -486,12 +486,44 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  clangd = {
+    cmd = {
+      "clangd",
+      "--background-index",
+      "-j=12",
+      "--query-driver=/usr/bin/**/clang-*,/bin/clang,/bin/clang++,/usr/bin/gcc,/usr/bin/g++",
+      "--clang-tidy",
+      "--clang-tidy-checks=*",
+      "--all-scopes-completion",
+      "--cross-file-rename",
+      "--completion-style=detailed",
+      "--header-insertion-decorators",
+      "--header-insertion=iwyu",
+      "--pch-storage=memory",
+    }
+  },
+
+  pylsp = {
+    pylsp = {
+      configurationSources = {"flake8"},
+      plugins = {
+        black           = { enabled = true, cache_config = true },
+        pylint          = { enabled = true, executable = "pylint" },
+        pylsp_mypy      = { enabled = true, live_mode = true, report_progress = true },
+        isort           = { enabled = true },
+        pyls_isort      = { enabled = true },
+        flake8          = { enabled = true },
+        jedi_completion = { enabled = true, fuzzy = true },
+        mccabe          = { enabled = true },
+
+        pycodestyle = { enabled = false },
+        pyflakes    = { enabled = false },
+        autopep8    = { enabled = false },
+      }
+    }
+  },
+
+  bashls = {},
 
   lua_ls = {
     Lua = {
@@ -515,6 +547,7 @@ local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
+  automatic_installation = true,
 }
 
 mason_lspconfig.setup_handlers {
@@ -524,6 +557,7 @@ mason_lspconfig.setup_handlers {
       on_attach = on_attach,
       settings = servers[server_name],
       filetypes = (servers[server_name] or {}).filetypes,
+      cmd = (servers[server_name] or {}).cmd,
     }
   end,
 }
